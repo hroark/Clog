@@ -5,9 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using AFG.Logger.Interfaces;
+using clog.Interfaces;
 
-namespace AFG.Logger
+namespace Clog
 {
     internal class LoggerEnumerator
     {

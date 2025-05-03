@@ -1,23 +1,16 @@
-﻿using AFG.Logger.Interfaces;
+﻿using clog.Interfaces;
 
-namespace AFG.Logger;
+namespace Clog;
 
-abstract class Logger : ILoggable
+internal abstract class Logger : ILoggable
 {
     private ILogger _nextLogger;
-
-    public ILogger SetNextLogger(ILogger logger)
-    {
-        this._nextLogger = logger;
-
-        return logger;
-    }
 
     public virtual object AddLogger(object request)
     {
         if (this._nextHandler != null)
         {
-            return this._nextLogger.Handle(request);
+            return _nextLogger.Handle(request);
         }
         else
         {
@@ -25,16 +18,22 @@ abstract class Logger : ILoggable
         }
     }
 
+    public virtual Task Log(LogLevels logLevel, string message)
+    {
+    }
+
+    public ILogger SetNextLogger(ILogger logger)
+    {
+        _nextLogger = logger;
+
+        return logger;
+    }
+
     public virtual void Setup()
     {
     }
 
     public virtual void TearDown()
-    {
-        
-    }
-
-    public virtual Task Log(LogLevels logLevel, string message)
     {
     }
 }

@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logger", "Logger\Logger.csproj", "{568689BB-E90A-4CB5-82B4-18E4015DD625}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clog", "Logger\Clog.csproj", "{568689BB-E90A-4CB5-82B4-18E4015DD625}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

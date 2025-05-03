@@ -1,6 +1,14 @@
-﻿namespace AFG.Logger
+﻿namespace clog;
 
-    public class LogLevels
+public void RemoveLogLevel(string level)
+{
+    if (EventLevels.Contains(level))
+    {
+        EventLevels.Remove(level);
+    }
+}
+
+public class LogLevels
 {
     public LogLevels()
     {
@@ -21,17 +29,11 @@
     {
         return EventLevels;
     }
+
     public void AddLogLevel(string level)
     {
         if (!EventLevels.Contains(level))
         {
             EventLevels.Add(level);
-        }
-    }
-    public void RemoveLogLevel(string level)
-    {
-        if (EventLevels.Contains(level))
-        {
-            EventLevels.Remove(level);
         }
     }

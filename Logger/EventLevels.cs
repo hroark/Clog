@@ -1,10 +1,10 @@
-﻿
+﻿namespace clog;
 
-namespace AFG.Logger;
-public struct EventLevels;
+// Changed struct to enum to fix CS1519 and IDE1007 errors
+public enum EventLevels
 {
-    "Informational",
-    "Error",
-    "Warning",
-    "Fatal"
+    Informational,
+    Error,
+    Warning,
+    Fatal
 }
