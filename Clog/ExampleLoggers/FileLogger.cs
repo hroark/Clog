@@ -1,4 +1,5 @@
-﻿using clog.Interfaces;
+﻿using clog;
+using clog.Interfaces;
 
 namespace AFG.Logger.Loggers;
 
@@ -29,7 +30,7 @@ public class FileLogger : ILoggable
         }
         catch (Exception ex)
         {
-            Log(LogLevels.Fatal, $"Error initializing FileLogger: {ex.Message}").Wait();
+            Log(EventLevels.Fatal, $"Error initializing FileLogger: {ex.Message}").Wait();
         }
     }
 
@@ -63,7 +64,7 @@ public class FileLogger : ILoggable
         string _filename = DateTime.Now("yyyyMMdd") + ".log";
         _fileStream = new StreamWriter(_fileDestination, _filename), true)
         {
-            AutoFlush = true
+            AutoFlush = true;
         }
         ;
     }

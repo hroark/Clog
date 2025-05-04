@@ -1,0 +1,5 @@
+﻿Ilogger
+Logger
+Add loggers
+Determine whsat level they respond to
+Log it in their concrete implementation
