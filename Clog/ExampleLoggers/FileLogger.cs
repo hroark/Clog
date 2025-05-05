@@ -1,13 +1,26 @@
-﻿using clog;
-using clog.Interfaces;
+﻿using Clog;
 
-namespace AFG.Logger.Loggers;
+namespace LoggerTypes;
 
-public class FileLogger : ILoggable
+public class FileLogger : CLogger
 {
     private static string _fileDestination = string.Empty;
     private bool _disposedValue;
-    private StreamWriter _fileStream;
+
+    private async Task LogAsynch(EventLevel logLevel, string message)
+    {
+        string logEntry = $"{DateTime.Now} - {logLevel} - {message}{Environment.NewLine}";
+
+        try
+        {
+            await File.AppendAllTextAsync(_fileDestination, logEntry);
+        }
+        catch (Exception e)
+        {
+            await File.AppendAllTextAsync(_fileDestination, e.Message); //This is interesting because we might not have a file to write to.
+            throw;
+        }
+    }
 
     protected virtual void Dispose(bool disposing)
     {
@@ -22,51 +35,18 @@ public class FileLogger : ILoggable
         }
     }
 
-    public FileLogger(string filePath)
+    public FileLogger(string filePath, EventLevel HandleTheseEvents, bool Append = true) : base(HandleTheseEvents)
     {
-        try
+        _fileDestination = filePath;
+        using (StreamWriter fileStream = File.AppendText(_fileDestination))
         {
-            _fileDestination = filePath;
-        }
-        catch (Exception ex)
-        {
-            Log(EventLevels.Fatal, $"Error initializing FileLogger: {ex.Message}").Wait();
+            fileStream.WriteLine("Log file created at: " + DateTime.Now);
         }
     }
 
-    public static async Task Log(LogLevels logLevel, string message)
+    public override void Log(EventLevel eventLevel, string message)
     {
-        string logEntry = $"{DateTime.Now} - {logLevel} - {message}{Environment.NewLine}";
-
-        try
-        {
-            await File.AppendAllTextAsync(_fileDestination, logEntry);
-        }
-        catch (Exception e)
-        {
-            await File.AppendAllTextAsync(_fileDestination, e.Message);
-            throw;
-        }
-    }
-
-    public object Log(object request)
-    {
-        throw new NotImplementedException();
-    }
-
-    public ILoggable NextLogger(ILoggable logger)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Setup()
-    {
-        string _filename = DateTime.Now("yyyyMMdd") + ".log";
-        _fileStream = new StreamWriter(_fileDestination, _filename), true)
-        {
-            AutoFlush = true;
-        }
-        ;
+        LogAsynch(eventLevel, message).Wait();
     }
 
     public void TearDown()
