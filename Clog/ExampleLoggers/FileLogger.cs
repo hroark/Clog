@@ -2,9 +2,11 @@
 
 namespace LoggerTypes;
 
+[LoggerLevel(EventLevel.Informational)]
 public class FileLogger : CLogger
 {
     private static string _fileDestination = string.Empty;
+    private List<EventLevel> _currentLevel = new();
     private bool _disposedValue;
 
     private async Task LogAsynch(EventLevel logLevel, string message)

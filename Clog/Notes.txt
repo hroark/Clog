@@ -1,5 +1,7 @@
-﻿CLogger
-|
-Cloggers
-|
-|
+﻿+TODO: Incorporate attribute(s) into CLogger instead of passing it around
++TODO: Handle 2 new EventTypes
+	None: turn of loggin on thais Clogger
+	All: turn on logging for all events
++Add a dictionary to store all registered loggers
++Allow for removal of loggers
++Config File?
