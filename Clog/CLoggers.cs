@@ -18,6 +18,9 @@ namespace Clog;
 /// <seealso cref="ICLogger" />
 public class CLoggers : ILoggable, ICLogger
 {
+    /// <summary>
+    /// The disposed value
+    /// </summary>
     private bool disposedValue;
 
     /// <summary>
@@ -43,10 +46,13 @@ public class CLoggers : ILoggable, ICLogger
         }
     }
 
-    /// <summary>The main logger class</summary>
+    /// <summary>
+    /// The main logger class
+    /// </summary>
+    /// <returns>System.Nullable&lt;CLogger&gt;.</returns>
     protected CLogger? GetActiveLoggers()
     {
-        foreach (var logger in _loggers)
+        foreach (CLogger logger in _loggers)
         {
             return logger;
         }

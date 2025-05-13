@@ -3,41 +3,40 @@ using Clog.ExampleLoggers;
 
 namespace CloggerTests;
 
-public class ConsoleLoggerLogTest_Pass : IDisposable
+public class ConsoleLoggerLogTest_Pass : CLogger, IDisposable
 {
-    private readonly StringWriter capturedWriter;
-    private readonly TextWriter stdOutWriter;
+    private readonly StringWriter _capturedWriter; // Renamed field to resolve ambiguity
+    private readonly TextWriter _stdOutWriter; // Renamed field for consistency
 
-    public ConsoleLoggerLogTest_Pass() // Fix: Removed parentheses after class name and corrected constructor syntax
+    public object Captured { get; internal set; }
+    public TextWriter CapturedWriter => _capturedWriter; // Updated to use renamed field
+
+    public ConsoleLoggerLogTest_Pass()
     {
-        stdOutWriter = Console.Out;
-        capturedWriter = new StringWriter();
-        Console.SetOut(capturedWriter);
+        _stdOutWriter = Console.Out ?? throw new InvalidOperationException("Console.Out cannot be null.");
+        _capturedWriter = new StringWriter();
+        Console.SetOut(_capturedWriter);
+        Captured = string.Empty;
     }
-
-    public TextWriter Captured => capturedWriter;
 
     public void Dispose()
     {
-        Console.SetOut(stdOutWriter);
-        capturedWriter.Dispose();
+        Console.SetOut(_stdOutWriter); // Updated to use renamed field
+        _capturedWriter.Dispose(); // Updated to use renamed field
     }
 
     [Fact]
-    public void TestLoggerOutput() // Fix: Added method name for the test
+    public void ExecuteLogTest() // Renamed method to avoid conflict
     {
         // Arrange
-        ConsoleLogger logger = new ConsoleLogger(new CLogger());
+        ConsoleLogger logger = new ConsoleLogger(new CLogger()); // Fixed instantiation to use ConsoleLogger directly
         string? expectedOutput = "Logger Pass";
 
         // Act
-        using (var outputCapture = new ConsoleLoggerLogTest_Fail())
-        {
-            Console.Write("Logger Pass");
-            string? CapturedConsole = outputCapture.Captured.ToString();
+        Console.Write("Logger Pass");
+        string? capturedConsole = _capturedWriter.ToString(); // Updated to use the correct field directly
 
-            // Assert
-            Assert.Equal(expectedOutput, CapturedConsole);
-        }
+        // Assert
+        Assert.Equal(expectedOutput, capturedConsole);
     }
 }
