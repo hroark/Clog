@@ -1,42 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Tracing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Clog;
 
-namespace Clog;
-
-public abstract class CLogger
+/// <summary>
+/// Class CLogger.
+/// </summary>
+public class CLogger : ILoggable, IDisposable
 {
-    protected EventLevel _level;
+    private bool disposedValue;
 
-    protected void HandleLog(EventLevel eventLevel, string message)
+    protected virtual void Dispose(bool disposing)
     {
-        if (_level == eventLevel)
+        if (!disposedValue)
         {
-            Log(eventLevel, message);
-        }
-        else
-        {
-            _nextLogger?.HandleLog(eventLevel, message);
+            if (disposing)
+            {
+                // Free managed resources here
+            }
+
+            // Free unmanaged resources here (if any)
+            disposedValue = true;
         }
     }
 
-    public CLogger? _nextLogger; // Mark as nullable to satisfy CS8618
-
-    /// <summary>Initializes a new instance of the <see cref="CLoggers" /> class.</summary>
-    /// <param name="LevesTohandle">The levels to handle.</param>
-    public CLogger(EventLevel LevelTohandle)
+    public CLogger(CLogger NewWatcher)
     {
-        _level = LevelTohandle;
+        _subscriptionLevel = NewWatcher._subscriptionLevel;
     }
 
-    // protected abstract Task LogAsynch(EventLevel eventLevel, string message);
-    public abstract void Log(EventLevel eventLevel, string message);
-
-    public void SetNext(CLogger nextLogger)
+    public CLogger()
     {
-        _nextLogger = nextLogger;
+    }
+
+    public EventLevel _subscriptionLevel { get; set; }
+
+    // Explicit implementation of IDisposable.Dispose
+    void IDisposable.Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    public virtual void Log(EventLevel CurrentLevel, string Message)
+    {
+        throw new NotImplementedException("No valid logger found");
+    }
+
+    // Explicit interface implementation for ILoggable.Log
+    void ILoggable.Log(EventLevel Level, string Message)
+    {
+        throw new NotImplementedException();
+    }
+
+    public virtual void Subscribe(CLogger Logger)
+    {
+        throw new NotImplementedException("No valid logger found");
     }
 }

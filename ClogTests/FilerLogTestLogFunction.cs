@@ -1,6 +1,5 @@
 using Clog;
 using LoggerTypes;
-using Xunit;
 
 namespace ClogTests
 {
