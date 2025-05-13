@@ -1,42 +1,14 @@
-﻿using clog;
-using clog.Interfaces;
+﻿namespace Clog.ExampleLoggers;
 
-namespace AFG.Logger.Loggers;
-
-public class FileLogger : ILoggable
+public class FileLogger : CLogger
 {
     private static string _fileDestination = string.Empty;
+    private EventLevel _currentLevel;
     private bool _disposedValue;
-    private StreamWriter _fileStream;
 
-    protected virtual void Dispose(bool disposing)
+    private async Task LogAsynch(EventLevel logLevel, string message)
     {
-        if (!_disposedValue)
-        {
-            if (disposing)
-            {
-                // TODO: dispose managed state (managed objects)
-            }
-
-            _disposedValue = true;
-        }
-    }
-
-    public FileLogger(string filePath)
-    {
-        try
-        {
-            _fileDestination = filePath;
-        }
-        catch (Exception ex)
-        {
-            Log(EventLevels.Fatal, $"Error initializing FileLogger: {ex.Message}").Wait();
-        }
-    }
-
-    public static async Task Log(LogLevels logLevel, string message)
-    {
-        string logEntry = $"{DateTime.Now} - {logLevel} - {message}{Environment.NewLine}";
+        string logEntry = $"{DateTime.Now} - {string.Join(", ", logLevel)} - {message}{Environment.NewLine}";
 
         try
         {
@@ -44,29 +16,52 @@ public class FileLogger : ILoggable
         }
         catch (Exception e)
         {
-            await File.AppendAllTextAsync(_fileDestination, e.Message);
+            await File.AppendAllTextAsync(_fileDestination, e.Message); // This is interesting because we might not have a file to write to.
             throw;
         }
     }
 
-    public object Log(object request)
+    protected override void Dispose(bool disposing = true)
     {
-        throw new NotImplementedException();
-    }
-
-    public ILoggable NextLogger(ILoggable logger)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Setup()
-    {
-        string _filename = DateTime.Now("yyyyMMdd") + ".log";
-        _fileStream = new StreamWriter(_fileDestination, _filename), true)
+        if (!_disposedValue)
         {
-            AutoFlush = true;
+            if (disposing)
+            {
+                Dispose(true);
+            }
+
+            _disposedValue = true;
         }
-        ;
+    }
+
+    public FileLogger(CLogger NewWatcher) : base(NewWatcher)
+    {
+        _subscriptionLevel = NewWatcher._subscriptionLevel;
+    }
+
+    public string filePath
+    {
+        get => _fileDestination;
+        set => _fileDestination = value;
+    }
+
+    public override void Log(EventLevel CurrentLLevel, string message)
+    {
+        _fileDestination = filePath;
+        using (StreamWriter fileStream = File.AppendText(_fileDestination))
+        {
+            fileStream.WriteLine("Log file created at: " + DateTime.Now);
+        }
+        _currentLevel = CurrentLLevel;
+        if (_currentLevel == CurrentLLevel)
+        {
+            LogAsynch(_currentLevel, message).Wait();
+        }
+    }
+
+    public void Subscribe(CLogger logger)
+    {
+        // Implementation for subscribing to another logger
     }
 
     public void TearDown()
